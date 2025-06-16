@@ -5,7 +5,9 @@ const bcrypt = require("bcrypt");
 const uid2 = require("uid2");
 const User = require("../models/users");
 
+// -------------------------
 // ROUTE POST : USER SIGN UP
+// -------------------------
 
 router.post("/signup", async (req, res) => {
   try {
@@ -69,6 +71,24 @@ router.post("/signup", async (req, res) => {
   } catch {
     res.status(500).json({ result: false, error: "Error saving user" });
   }
+});
+
+// ------------------------
+// ROUTE GET : USER SIGN IN
+// ------------------------
+
+router.get("/signin", (req, res) => {
+  User.findOne({ email: req.body.email }).then((data) => {
+    if (data && bcrypt.compareSync(req.body.password, data.password)) {
+      res
+        .status(201)
+        .json({ result: true, message: "Sign in done with success" });
+    } else {
+      res
+        .status(409)
+        .json({ result: false, error: "email or password not matching" });
+    }
+  });
 });
 
 module.exports = router;
